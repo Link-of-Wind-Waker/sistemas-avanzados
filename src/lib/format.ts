@@ -1,5 +1,5 @@
 export function formatPrice(value: number) {
-  return "$" + value.toFixed(2);
+  return "$" + value.toLocaleString("es-CO");
 }
 
 export const SHIPPING_COST = 12000;
