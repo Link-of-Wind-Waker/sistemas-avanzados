@@ -35,7 +35,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   }
 
   function removeItem(id: number) {
-    setItems(items.filter((item) => item.product.id === id));
+    setItems(items.filter((item) => item.product.id !== id));
   }
 
   function updateQuantity(id: number, quantity: number) {
