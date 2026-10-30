@@ -35,6 +35,7 @@ export default function CarritoPage() {
     <div className="mx-auto max-w-5xl px-6 py-10">
       <h1 className="mb-6 text-4xl font-bold">Tu carrito</h1>
 
+    <div className="overflow-x-auto">
       <table className="min-w-[700px] text-left">
         <thead>
           <tr className="border-b">
@@ -75,7 +76,7 @@ export default function CarritoPage() {
           ))}
         </tbody>
       </table>
-
+    </div>
       <div className="mt-8 flex justify-between gap-10">
         <div className="flex gap-2">
           <input
