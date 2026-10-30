@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useMemo, useSyncExternalStore } from "react";
 import type { Product } from "@/data/products";
 
 export interface CartItem {
@@ -19,19 +19,45 @@ interface CartContextValue {
 
 const CartContext = createContext<CartContextValue | null>(null);
 
+const listeners = new Set<() => void>();
+
+function subscribe(callback: () => void) {
+  listeners.add(callback);
+  window.addEventListener("storage", callback);
+  return () => {
+    listeners.delete(callback);
+    window.removeEventListener("storage", callback);
+  };
+}
+
+const getSnapshot = () => localStorage.getItem("cart");
+const getServerSnapshot = () => null;
+
+function setItems(items: CartItem[]) {
+  localStorage.setItem("cart", JSON.stringify(items));
+  listeners.forEach((listener) => listener());
+}
+
 export function CartProvider({ children }: { children: React.ReactNode }) {
-  const [items, setItems] = useState<CartItem[]>(() => {
-    if (typeof window === "undefined") return [];
-    const saved = localStorage.getItem("cart");
-    return saved ? JSON.parse(saved) : [];
-  });
+    const saved = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+  const items: CartItem[] = useMemo(
+    () => (saved ? JSON.parse(saved) : []),
+    [saved]
+  );
 
-  useEffect(() => {
-    localStorage.setItem("cart", JSON.stringify(items));
-  }, [items]);
-
-  function addItem(product: Product, quantity: number) {
-    setItems([...items, { product, quantity }]);
+    function addItem(product: Product, quantity: number) {
+    const exists = items.find((item) => item.product.id === product.id);
+    if (exists) {
+      setItems(
+        items.map((item) =>
+          item.product.id === product.id
+            ? { ...item, quantity: item.quantity + quantity }
+            : item
+        )
+      );
+    } else {
+      setItems([...items, { product, quantity }]);
+    }
   }
 
   function removeItem(id: number) {
