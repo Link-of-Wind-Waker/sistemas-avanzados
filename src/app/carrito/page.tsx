@@ -59,6 +59,7 @@ export default function CarritoPage() {
                   onChange={(e) =>
                     updateQuantity(item.product.id, Number(e.target.value))
                   }
+                  aria-label={`Cantidad de ${item.product.name}`}
                   className="w-16 rounded border px-2"
                 />
               </td>
