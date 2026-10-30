@@ -10,7 +10,10 @@ export default function CarritoPage() {
   const [coupon, setCoupon] = useState("");
   const [discount, setDiscount] = useState(0);
 
-  const subtotal = items.reduce((acc, item) => acc + item.product.price, 0);
+    const subtotal = items.reduce(
+    (acc, item) => acc + item.product.price * item.quantity,
+    0
+  );
   const shipping = subtotal >= FREE_SHIPPING_FROM ? 0 : SHIPPING_COST;
   const total = subtotal - discount + shipping;
 
@@ -66,6 +69,7 @@ export default function CarritoPage() {
               <td>
                 <button
                   onClick={() => removeItem(item.product.id)}
+                  aria-label={`Eliminar ${item.product.name} del carrito`}
                   className="text-red-600"
                 >
                   🗑️
