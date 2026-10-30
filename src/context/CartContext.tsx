@@ -38,10 +38,13 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     setItems(items.filter((item) => item.product.id !== id));
   }
 
-  function updateQuantity(id: number, quantity: number) {
+    function updateQuantity(id: number, quantity: number) {
+    const safeQuantity = Number.isFinite(quantity)
+      ? Math.max(1, Math.floor(quantity))
+      : 1;
     setItems(
       items.map((item) =>
-        item.product.id === id ? { ...item, quantity } : item
+        item.product.id === id ? { ...item, quantity: safeQuantity } : item
       )
     );
   }
